@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year 9 Game Design Lesson 5: Enemy Movement & Collision</title>
+    <style>
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            min-height: 100vh;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            font-size: 1.8em;
+        }
+        h3 {
+            color: #764ba2;
+            margin: 20px 0 15px;
+            font-size: 1.3em;
+        }
+        ul {
+            margin-left: 30px;
+            margin-top: 10px;
+        }
+        li {
+            margin: 8px 0;
+        }
+
+        /* Index Section */
+        .index-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border-left: 5px solid #667eea;
+        }
+        .index-title {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        .index-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .index-list li {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .index-list li:hover {
+            transform: translateX(10px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .index-list a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        .index-list .time {
+            margin-left: auto;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        /* Main Content Sections */
+        .section {
+            margin: 40px 0;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .learning-box {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #4caf50;
+        }
+        .success-criteria {
+            background: #fff3e0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #ff9800;
+        }
+        .activity-box {
+            background: #f3e5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 2px solid #9c27b0;
+        }
+        
+        /* Button Styles */
+        .navigation-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .nav-button, .worksheet-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background-color: #667eea;
+            color: white !important;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+        .nav-button:hover, .worksheet-button:hover {
+            background-color: #5a67d8;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .nav-button:active, .worksheet-button:active {
+            transform: translateY(0px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .nav-button.return-index {
+            background-color: #764ba2;
+        }
+        .nav-button.return-index:hover {
+            background-color: #6c4298;
+        }
+        .nav-button.disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            pointer-events: none;
+            opacity: 0.6;
+            box-shadow: none;
+            transform: none;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Year 9 Game Design Lesson 5 🚀</h1>
+            <h2 style="color: white; font-size: 1.5em; margin-top: 10px;">Enemy Movement & Collision Detection</h2>
+        </div>
+
+        <div id="main-index" class="index-section">
+            <h2 class="index-title">📚 Lesson Index</h2>
+            <ul class="index-list">
+                <li><a href="#learning-intentions">📎 Learning Intentions & Success Criteria</a></li>
+                <li><a href="#welcome-review">1️⃣ Welcome & Review <span class="time">10 mins</span></a></li>
+                <li><a href="#arcade-hook">2️⃣ Arcade Hook: Playing Galaga <span class="time">15 mins</span></a></li>
+                <li><a href="#i-do">3️⃣ I Do: Teacher Demonstration <span class="time">30 mins</span></a></li>
+                <li><a href="#we-do">4️⃣ We Do: Guided Practice <span class="time">40 mins</span></a></li>
+                <li><a href="#break-time">5️⃣ Break Time: Movement Activity <span class="time">10 mins</span></a></li>
+                <li><a href="#you-do">6️⃣ You Do: Independent Practice <span class="time">45 mins</span></a></li>
+                <li><a href="#portfolio-time">7️⃣ Portfolio Work Time <span class="time">30 mins</span></a></li>
+                <li><a href="#exit-ticket">8️⃣ Exit Ticket & Reflection <span class="time">10 mins</span></a></li>
+            </ul>
+        </div>
+
+        <section id="learning-intentions" class="section">
+            <h2>📎 Learning Intentions & Success Criteria</h2>
+            <div class="learning-box">
+                <h3>Learning Intentions</h3>
+                <p>Students will:</p>
+                <ul>
+                    <li>Create enemy sprites that move automatically on screen</li>
+                    <li>Implement basic collision detection between game objects</li>
+                    <li>Design and code game-over conditions</li>
+                    <li>Understand the relationship between movement patterns and gameplay</li>
+                </ul>
+            </div>
+            <div class="success-criteria">
+                <h3>Success Criteria</h3>
+                <p>Students can:</p>
+                <ul>
+                    <li>Create an enemy sprite that moves automatically</li>
+                    <li>Detect collisions between sprites using pygame.sprite.collide_rect()</li>
+                    <li>Create a game-over condition that stops the game appropriately</li>
+                    <li>Explain how collision detection works in their own words</li>
+                </ul>
+            </div>
+            <div class="navigation-bar">
+                <a href="#" class="nav-button disabled">⬅️ Back</a>
+                <a href="#main-index" class="nav-button return-index">📚 Return to Index</a>
+                <a href="#welcome-review" class="nav-button">Next ➡️</a>
+            </div>
+        </section>
+
+        <section id="welcome-review" class="section">
+            <h2>1️⃣ Welcome & Review of Previous Lesson</h2>
+            <h3>Interactive Review Activity: Portfolio Check-In</h3>
+            <div class="button-container">
+                <a href="lesson5-review-activity.html" target="_blank" class="worksheet-button">🚀 Launch Review Activity</a>
+            </div>
+            <div class="navigation-bar">
+                <a href="#learning-intentions" class="nav-button">⬅️ Back</a>
+                <a href="#main-index" class="nav-button return-index">📚 Return to Index</a>
+                <a href="#arcade-hook" class="nav-button">Next ➡️</a>
+            </div>
+        </section>
+
+        <section id="arcade-hook" class="section">
+            <h2>2️⃣ Arcade Hook: Playing Galaga</h2>
+            <p>Click the link to play the classic arcade game, Galaga. Pay close attention to how the enemies move and interact with your ship.</p>
+            <div class="button-container">
+                 <a href="https://www.retrogames.cc/arcade-games/galaga-namco-revision-b.html" target="_blank" class="worksheet-button">🕹️ Play Galaga Online</a>
+            </div>
+            <h3>Interactive Analysis Worksheet</h3>
+            <p>After playing, open the interactive worksheet to deconstruct what you observed.</p>
+            <div class="button-container">
+                <a href="lesson5-galaga-analysis.html" target="_blank" class="worksheet-button">📝 Open Galaga Analysis Worksheet</a>
+            </div>
+            <div class="navigation-bar">
+                <a href="#welcome-review" class="nav-button">⬅️ Back</a>
+                <a href="#main-index" class="nav-button return-index">📚 Return to Index</a>
+                <a href="#i-do" class="nav-button">Next ➡️</a>
+            </div>
+        </section>
+
+        <section id="i-do" class="section">
+            <h2>3️⃣ I Do: Teacher Demonstration</h2>
+            <h3>Watch: Enemy Movement Basics</h3>
+            <p>This video provides a great introduction to the concepts we'll be coding.</p>
+             <div class="button-container">
+                <a href="https://www.youtube.com/watch?v=V__v9-j_Yt0" target="_blank" class="worksheet-button">📺 Watch PyGame Enemy Movement Tutorial (0:00-5:30)</a>
+            </div>
+            <h3>Live Coding Demo with Interactive Visualiser</h3>
+            <p>Let's look at the code for creating a simple enemy and detecting collisions.</p>
+            <div class="button-container">
+                <a href="lesson5-code-visualiser.html" target="_blank" class="worksheet-button">💻 Launch Interactive Code Visualiser</a>
+            </div>
+            <div class="navigation-bar">
+                <a href="#arcade-hook" class="nav-button">⬅️ Back</a>
+                <a href="#main-index" class="nav-button return-index">📚 Return to Index</a>
+                <a href="#we-do" class="nav-button">Next ➡️</a>
+            </div>
+        </section>
+
+        <section id="we-do" class="section">
+            <h2>4️⃣ We Do: Guided Practice</h2>
+            <h3>Step-by-Step Coding Together</h3>
+            <p>Follow along as we build the enemy system together using this interactive code builder.</p>
+            <div class="button-container">
+                <a href="lesson5-code-builder.html" target="_blank" class="worksheet-button">🛠️ Launch Guided Code Builder</a>
+            </div>
+            <div class="navigation-bar">
+                <a href="#i-do" class="nav-button">⬅️ Back</a>
+                <a href="#main-index" class="nav-button return-index">📚 Return to Index</a>
+                <a href="#break-time" class="nav-button">Next ➡️</a>
+            </div>
+        </section>
+
+        <section id="break-time" class="section">
+            <h2>5️⃣ Break Time: Movement Activity</h2>
+            <div class="activity-box">
+                <h3>Stand up and play "Human Collision Detection"</h3>
+                <ul>
+                    <li>Students move around the room.</li>
+                    <li>When the teacher calls "COLLISION!", students must freeze if they're within arm's reach of another student.</li>
+                    <li>This demonstrates collision boundaries in a physical space.</li>
+                </ul>
+            </div>
+            <div class="navigation-bar">
+                <a href="#we-do" class="nav-button">⬅️ Back</a>
+                <a href="#main-index" class="nav-button return-index">📚 Return to Index</a>
+                <a href="#you-do" class="nav-button">Next ➡️</a>
+            </div>
+        </section>
+
+        <section id="you-do" class="section">
+            <h2>6️⃣ You Do: Independent Practice</h2>
+            <h3>Watch: Advanced Collision Tutorial</h3>
+             <div class="button-container">
+                <a href="https://www.youtube.com/watch?v=M__RB7-s_wE" target="_blank" class="worksheet-button">📺 Watch Pygame Collision Detection Explained (5 mins)</a>
+            </div>
+            <h3>Individual Coding Tasks</h3>
+            <p>Work through the challenges on the interactive board to build and enhance your enemy system.</p>
+            <div class="button-container">
+                <a href="lesson5-challenge-board.html" target="_blank" class="worksheet-button">🏆 Open Pygame Challenge Board</a>
+            </div>
+            <div class="navigation-bar">
+                <a href="#break-time" class="nav-button">⬅️ Back</a>
+                <a href="#main-index" class="nav-button return-index">📚 Return to Index</a>
+                <a href="#portfolio-time" class="nav-button">Next ➡️</a>
+            </div>
+        </section>
+
+        <section id="portfolio-time" class="section">
+            <h2>7️⃣ Portfolio Work Time</h2>
+            <h3>Document Your Work</h3>
+            <p>Use the template to document your collision detection system in your portfolio.</p>
+            <div class="button-container">
+                <a href="lesson5-portfolio-template.html" target="_blank" class="worksheet-button">📁 Open Portfolio Documentation Template</a>
+            </div>
+            <div class="navigation-bar">
+                <a href="#you-do" class="nav-button">⬅️ Back</a>
+                <a href="#main-index" class="nav-button return-index">📚 Return to Index</a>
+                <a href="#exit-ticket" class="nav-button">Next ➡️</a>
+            </div>
+        </section>
+
+        <section id="exit-ticket" class="section">
+            <h2>8️⃣ Exit Ticket & Reflection</h2>
+            <p>Please complete the exit ticket to reflect on today's lesson.</p>
+            <div class="button-container">
+                <a href="lesson5-exit-ticket.html" target="_blank" class="worksheet-button">🎯 Complete Exit Ticket</a>
+            </div>
+            <div class="navigation-bar">
+                <a href="#portfolio-time" class="nav-button">⬅️ Back</a>
+                <a href="#main-index" class="nav-button return-index">📚 Return to Index</a>
+                <a href="#" class="nav-button disabled">Next ➡️</a>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

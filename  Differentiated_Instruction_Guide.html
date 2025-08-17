@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Differentiated Instruction Guide - Lesson 5</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            line-height: 1.6; 
+            max-width: 900px; 
+            margin: 20px auto; 
+            padding: 20px; 
+            background: #f4f4f4; 
+        }
+        .header { 
+            background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%); 
+            color: white; 
+            padding: 30px; 
+            border-radius: 10px; 
+            margin-bottom: 30px; 
+            text-align: center; 
+        }
+        h1 { margin: 0; }
+        .section { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 10px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1); 
+        }
+        h2 { 
+            color: #ff6b6b; 
+            border-bottom: 2px solid #ff6b6b; 
+            padding-bottom: 10px; 
+            margin-bottom: 20px; 
+        }
+        h3 { 
+            color: #4ecdc4; 
+            margin-top: 20px; 
+        }
+        .code-scaffold { 
+            background: #2d2d30; 
+            color: #d4d4d4; 
+            padding: 15px; 
+            border-radius: 5px; 
+            font-family: "Courier New", monospace; 
+            margin: 10px 0; 
+            white-space: pre-wrap;
+        }
+        ul {
+            margin-left: 20px;
+            padding-left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>👩‍🏫 Differentiated Instruction Guide 👨‍🏫</h1>
+        <p style="margin-top: 10px;">Lesson 5: Enemy Movement & Collision Detection</p>
+    </div>
+
+    <div class="section">
+        <h2>For Students with Autism Spectrum Disorder</h2>
+        <h3>Modified Enemy Class with Heavy Scaffolding:</h3>
+        <div class="code-scaffold">
+# STEP 1: Make the enemy box
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, x_position, y_position):
+        super().__init__()
+        # The enemy is a red square
+        self.image = pygame.Surface((30, 30))
+        self.image.fill((255, 0, 0))  # RED color
+        
+        # Where is the enemy?
+        self.rect = self.image.get_rect()
+        self.rect.x = x_position  # Left-right position
+        self.rect.y = y_position  # Up-down position
+        
+        # How fast does it move?
+        self.speed = 1  # CHANGE THIS NUMBER to make it faster
+        </div>
+        <h3>Visual Support:</h3>
+        <p>Use colour-coded comments and provide a physical grid worksheet to track enemy positions.</p>
+    </div>
+
+    <div class="section">
+        <h2>For Students with Reading Comprehension Difficulties</h2>
+        <h3>Audio Support Resources:</h3>
+        <ul>
+            <li>Use Natural Reader to read code aloud.</li>
+            <li>Provide pre-recorded explanations of each code block.</li>
+            <li>Use visual flowcharts instead of written instructions.</li>
+        </ul>
+        <h3>Simplified Visual Collision Checker:</h3>
+        <div class="code-scaffold">
+# LOOK at the screen - do they TOUCH?
+if player_box.touches(enemy_box):
+    print("BOOM! They hit!")
+    game_over = True
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>For Students with ADHD</h2>
+        <h3>Gamified Progress Tracker:</h3>
+        <ul>
+            <li>Break tasks into 5-minute "sprints".</li>
+            <li>Use a timer visible on screen.</li>
+            <li>Provide immediate visual/audio feedback for completed tasks.</li>
+            <li>Allow movement breaks between sprints.</li>
+        </ul>
+        <h3>Quick Win Tasks:</h3>
+        <ul>
+            <li>Make enemy bigger (change one number)</li>
+            <li>Make enemy faster (change one number)</li>
+            <li>Change enemy colour (change three numbers)</li>
+            <li>Add a sound effect (one line of code)</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>For Students with Intellectual Developmental Disorders</h2>
+        <h3>Pre-Written Template with Fill-in-the-Blanks:</h3>
+        <div class="code-scaffold">
+# Enemy Setup - Just change the NUMBERS
+enemy_color = (255, 0, 0)      # Change these 3 numbers for colour
+enemy_size = 30                # Change this for size
+enemy_speed = 2                # Change this for speed
+
+class Enemy(pygame.sprite.Sprite):
+    # Teacher has written this part
+    # You just need to RUN it and CHANGE the numbers above
+        </div>
+        <h3>Physical "Unplugged" Activities:</h3>
+        <ul>
+            <li>Use toy cars on a grid to demonstrate collision.</li>
+            <li>Have student be the "computer" and move objects when you give commands.</li>
+            <li>Use large printed code cards to sequence the logic.</li>
+        </ul>
+    </div>
+</body>
+</html>

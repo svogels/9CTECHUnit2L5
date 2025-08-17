@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Guided Code Builder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            padding: 20px; 
+            background: #f0f0f0; 
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .step-container { 
+            background: white; 
+            border-radius: 10px; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+        }
+        .step-header { 
+            background: linear-gradient(90deg, #4CAF50, #45a049); 
+            color: white; 
+            padding: 15px; 
+            border-radius: 5px; 
+            margin: -20px -20px 15px -20px;
+            cursor: pointer; 
+        }
+        .step-content { 
+            display: none; 
+            padding: 10px; 
+        }
+        .active .step-content { 
+            display: block; 
+        }
+        .code-snippet { 
+            background: #2d2d30; 
+            color: #d4d4d4; 
+            padding: 15px; 
+            border-radius: 5px; 
+            font-family: "Courier New", monospace; 
+            margin: 10px 0; 
+            position: relative; 
+            white-space: pre-wrap;
+        }
+        .copy-btn { 
+            position: absolute; 
+            top: 5px; 
+            right: 5px; 
+            background: #007acc; 
+            color: white; 
+            border: none; 
+            padding: 5px 10px; 
+            border-radius: 3px; 
+            cursor: pointer; 
+        }
+        .copy-btn:hover { background: #005a9e; }
+        .checkpoint { 
+            background: #e8f5e9; 
+            border-left: 4px solid #4CAF50; 
+            padding: 10px; 
+            margin: 10px 0; 
+        }
+        button { 
+            background: #4CAF50; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            margin: 5px; 
+        }
+        button:hover { background: #45a049; }
+    </style>
+</head>
+<body>
+    <div class="container" id="code-builder-content">
+        <h2>🚀 Build Your Enemy System Step-by-Step</h2>
+        <div class="step-container active" id="step1">
+            <div class="step-header" onclick="toggleStep(1)">📦 Step 1: Import and Setup</div>
+            <div class="step-content">
+                <p>First, we need to import pygame and create our enemy sprite group:</p>
+                <div class="code-snippet">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre>import pygame
+import random
+
+# Create sprite groups
+all_sprites = pygame.sprite.Group()
+enemies = pygame.sprite.Group()</pre>
+                </div>
+                <div class="checkpoint">✅ <strong>Check:</strong> Do you have pygame imported at the top of your file?</div>
+            </div>
+        </div>
+        <div class="step-container" id="step2">
+            <div class="step-header" onclick="toggleStep(2)">👾 Step 2: Create Enemy Class</div>
+            <div class="step-content">
+                <p>Now let's create our Enemy class:</p>
+                <div class="code-snippet">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre>class Enemy(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.Surface((30, 30))
+        self.image.fill((255, 0, 0))  # Red enemy
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.speed_x = random.choice([-2, 2])
+        self.speed_y = 1</pre>
+                </div>
+                <div class="checkpoint">✅ <strong>Test:</strong> Try creating an enemy: `enemy = Enemy(100, 50)`</div>
+            </div>
+        </div>
+        <div class="step-container" id="step3">
+            <div class="step-header" onclick="toggleStep(3)">🏃 Step 3: Add Movement Method</div>
+            <div class="step-content">
+                <p>Add the update method to make enemies move:</p>
+                <div class="code-snippet">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre>    def update(self):
+        # Move the enemy
+        self.rect.x += self.speed_x
+        self.rect.y += self.speed_y
+        
+        # Bounce off walls
+        if self.rect.right > SCREEN_WIDTH or self.rect.left < 0:
+            self.speed_x = -self.speed_x
+        
+        # Reset if goes off bottom
+        if self.rect.top > SCREEN_HEIGHT:
+            self.rect.y = random.randrange(-100, -40)
+            self.rect.x = random.randrange(SCREEN_WIDTH)</pre>
+                </div>
+                <div class="checkpoint">✅ <strong>Debug:</strong> Add `print(self.rect.x, self.rect.y)` to see position values</div>
+            </div>
+        </div>
+        <div class="step-container" id="step4">
+            <div class="step-header" onclick="toggleStep(4)">💥 Step 4: Add Collision Detection</div>
+            <div class="step-content">
+                <p>In your main game loop, add collision checking:</p>
+                <div class="code-snippet">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre># Check for collisions
+hits = pygame.sprite.spritecollide(player, enemies, False)
+if hits:
+    # Game over condition
+    running = False
+    print("GAME OVER!")
+
+# Update all sprites
+all_sprites.update()</pre>
+                </div>
+                <div class="checkpoint">✅ <strong>Success!</strong> Your enemies should now move and detect collisions!</div>
+            </div>
+        </div>
+        <button onclick="downloadProgress()">📥 Download My Code</button>
+        <button onclick="checkAllSteps()">✅ Mark All Complete</button>
+    </div>
+
+    <script>
+        function toggleStep(num) {
+            document.querySelectorAll('.step-container').forEach(step => {
+                if (step.id !== `step${num}`) {
+                    step.classList.remove("active");
+                }
+            });
+            document.getElementById("step" + num).classList.toggle("active");
+        }
+
+        function copyCode(btn) {
+            const code = btn.parentElement.querySelector("pre").textContent;
+            navigator.clipboard.writeText(code);
+            btn.textContent = "Copied!";
+            setTimeout(() => btn.textContent = "Copy", 2000);
+        }
+
+        function downloadProgress() {
+            const { jsPDF } = window.jspdf;
+            const content = document.getElementById('code-builder-content');
+            
+            html2canvas(content, { scale: 2 }).then(canvas => {
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const ratio = canvas.width / canvas.height;
+                const imgWidth = pdfWidth - 20;
+                const imgHeight = imgWidth / ratio;
+
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10, 10, imgWidth, imgHeight);
+                pdf.save('code-builder-progress.pdf');
+            });
+        }
+
+        function checkAllSteps() {
+            document.querySelectorAll(".step-container").forEach(step => {
+                step.classList.add("active");
+            });
+        }
+    </script>
+</body>
+</html>

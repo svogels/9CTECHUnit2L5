@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Galaga Deconstruction</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            padding: 20px; 
+            background: #1a1a2e; 
+            color: white; 
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+        }
+        h2 { 
+            color: #0f4c75; 
+            background: linear-gradient(90deg, #00ff88, #0088ff); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            text-align: center; 
+        }
+        .section { 
+            background: #16213e; 
+            border-radius: 10px; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            border: 2px solid #0f4c75; 
+        }
+        textarea { 
+            width: 100%; 
+            min-height: 80px; 
+            padding: 10px; 
+            border-radius: 5px; 
+            border: 1px solid #0f4c75; 
+            background: #0f3460; 
+            color: white; 
+            font-size: 14px; 
+            resize: vertical; 
+        }
+        .question { 
+            color: #00ff88; 
+            margin-bottom: 10px; 
+            font-weight: bold; 
+        }
+        button { 
+            background: linear-gradient(90deg, #00ff88, #0088ff); 
+            color: #1a1a2e; 
+            border: none; 
+            padding: 12px 25px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: bold; 
+            margin-top: 20px; 
+            width: 100%; 
+        }
+        button:hover { 
+            opacity: 0.9; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="analysis-content">
+        <h2>🎮 GALAGA DECONSTRUCTION 🎮</h2>
+        <div class="section">
+            <div class="question">1. ENEMY MOVEMENT PATTERNS</div>
+            <p>Observe how the enemies move. What patterns do you notice?</p>
+            <textarea id="movement" placeholder="Example: Enemies swoop down in curves, they form formations at the top..."></textarea>
+        </div>
+        <div class="section">
+            <div class="question">2. COLLISION TYPES</div>
+            <p>What different types of collisions happen in Galaga?</p>
+            <textarea id="collisions" placeholder="Example: Player bullet hits enemy, enemy hits player ship..."></textarea>
+        </div>
+        <div class="section">
+            <div class="question">3. GAME OVER CONDITIONS</div>
+            <p>What causes the game to end?</p>
+            <textarea id="gameover" placeholder="Example: All player lives lost, no more enemies..."></textarea>
+        </div>
+        <div class="section">
+            <div class="question">4. CODING CHALLENGE PREDICTION</div>
+            <p>What will be the hardest part to code? Why?</p>
+            <textarea id="challenge" placeholder="Think about: movement patterns, timing, collision accuracy..."></textarea>
+        </div>
+        <button onclick="downloadPDF()">📥 Download as PDF</button>
+    </div>
+
+    <script>
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const content = document.getElementById('analysis-content');
+            
+            html2canvas(content, { 
+                scale: 2,
+                backgroundColor: "#1a1a2e" // Match body background
+            }).then(canvas => {
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const ratio = canvas.width / canvas.height;
+                const imgWidth = pdfWidth - 20;
+                const imgHeight = imgWidth / ratio;
+
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10, 10, imgWidth, imgHeight);
+                pdf.save('galaga-analysis.pdf');
+            });
+        }
+    </script>
+</body>
+</html>

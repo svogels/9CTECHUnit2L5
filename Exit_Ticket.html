@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exit Ticket</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .exit-card { 
+            background: white; 
+            border-radius: 10px; 
+            padding: 25px; 
+            max-width: 600px; 
+            margin: 0 auto; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h2 { 
+            color: #764ba2; 
+            text-align: center; 
+        }
+        .question { 
+            margin: 20px 0; 
+        }
+        .question label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: bold; 
+            color: #333; 
+        }
+        input[type="radio"] { 
+            margin-right: 10px; 
+        }
+        .rating { 
+            display: flex; 
+            justify-content: space-between; 
+            margin: 10px 0; 
+        }
+        .submit-btn { 
+            background: #667eea; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            width: 100%; 
+            margin-top: 20px; 
+            font-size: 16px; 
+        }
+        .submit-btn:hover { background: #5a67d8; }
+        textarea { 
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+        }
+    </style>
+</head>
+<body>
+    <div class="exit-card" id="exit-ticket-content">
+        <h2>🎯 Exit Ticket: Lesson 5</h2>
+        <div class="question">
+            <label>1. Which collision detection method did we use?</label>
+            <input type="radio" name="q1" value="a"> pygame.sprite.collide()<br>
+            <input type="radio" name="q1" value="b"> pygame.sprite.spritecollide()<br>
+            <input type="radio" name="q1" value="c"> pygame.collision.detect()<br>
+        </div>
+        <div class="question">
+            <label>2. Rate your understanding of enemy movement (1-5):</label>
+            <div class="rating">
+                <label><input type="radio" name="q2" value="1"> 1 😕</label>
+                <label><input type="radio" name="q2" value="2"> 2 🤔</label>
+                <label><input type="radio" name="q2" value="3"> 3 😐</label>
+                <label><input type="radio" name="q2" value="4"> 4 🙂</label>
+                <label><input type="radio" name="q2" value="5"> 5 😄</label>
+            </div>
+        </div>
+        <div class="question">
+            <label>3. What was the most challenging part of today?</label>
+            <textarea rows="3" id="challenge"></textarea>
+        </div>
+        <div class="question">
+            <label>4. What will you add to your game next?</label>
+            <textarea rows="3" id="next"></textarea>
+        </div>
+        <button class="submit-btn" onclick="submitTicket()">Submit & Download</button>
+    </div>
+
+    <script>
+        function submitTicket() {
+            const answers = {
+                q1: document.querySelector("input[name=q1]:checked")?.value,
+                q2: document.querySelector("input[name=q2]:checked")?.value,
+                challenge: document.getElementById("challenge").value,
+                next: document.getElementById("next").value
+            };
+            
+            localStorage.setItem("exitTicket_lesson5", JSON.stringify(answers));
+            alert("Exit ticket submitted! Your PDF will now download.");
+            downloadPDF();
+        }
+
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const content = document.getElementById('exit-ticket-content');
+            
+            // Temporarily hide the button for the PDF
+            const button = content.querySelector('.submit-btn');
+            button.style.display = 'none';
+
+            html2canvas(content, { scale: 2 }).then(canvas => {
+                // Show the button again
+                button.style.display = 'block';
+
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const ratio = canvas.width / canvas.height;
+                const imgWidth = pdfWidth - 20;
+                const imgHeight = imgWidth / ratio;
+
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10, 10, imgWidth, imgHeight);
+                pdf.save('exit-ticket-lesson5.pdf');
+            });
+        }
+    </script>
+</body>
+</html>

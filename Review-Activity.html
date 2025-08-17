@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lesson 4 Review</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+        .review-card { 
+            background: white; 
+            border-radius: 10px; 
+            padding: 25px; 
+            margin-bottom: 15px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+            transition: transform 0.3s; 
+        }
+        .review-card:hover { 
+            transform: translateY(-5px); 
+        }
+        h2 { 
+            color: #764ba2; 
+            margin-top: 0; 
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+        .checklist { 
+            list-style: none; 
+            padding: 0; 
+        }
+        .checklist li { 
+            padding: 12px; 
+            margin: 8px 0; 
+            background: #f0f0f0; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            border-left: 5px solid #667eea;
+            transition: all 0.2s ease-in-out;
+        }
+        .checklist li:hover { 
+            background: #e0e0e0; 
+            border-left-color: #764ba2;
+        }
+        .checked { 
+            background: #d4edda !important; 
+            border-left-color: #28a745 !important;
+            text-decoration: line-through; 
+            color: #555;
+        }
+        button { 
+            background: #667eea; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            transition: background-color 0.3s;
+        }
+        button:hover { 
+            background: #5a67d8; 
+        }
+        .download-btn {
+            background: #28a745;
+            margin-top: 15px;
+        }
+        .download-btn:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="review-content">
+        <div class="review-card">
+            <h2>📋 Lesson 4 Review: Research & Planning</h2>
+            <p>Click each item you completed in your portfolio:</p>
+            <ul class="checklist" id="checklist">
+                <li onclick="toggleCheck(this)">✓ Created PMI charts for two classic arcade games</li>
+                <li onclick="toggleCheck(this)">✓ Developed a flowchart for my game logic</li>
+                <li onclick="toggleCheck(this)">✓ Identified game mechanics to incorporate</li>
+                <li onclick="toggleCheck(this)">✓ Completed "Researching & Planning" portfolio section</li>
+            </ul>
+            <p id="feedback" style="color: #667eea; font-weight: bold;"></p>
+        </div>
+        <div class="review-card">
+            <h2>🎮 Quick Warm-Up Question</h2>
+            <p>In your flowchart, where would collision detection happen?</p>
+            <button onclick="showHint()">Show Hint</button>
+            <p id="hint" style="display: none; color: #764ba2; margin-top: 10px;">
+                💡 Collision detection typically happens in the main game loop, after movement but before drawing!
+            </p>
+        </div>
+        <button class="download-btn" onclick="downloadPDF()">📥 Download My Review</button>
+    </div>
+
+    <script>
+        function toggleCheck(element) {
+            element.classList.toggle("checked");
+            updateFeedback();
+        }
+        
+        function updateFeedback() {
+            const checked = document.querySelectorAll(".checked").length;
+            const feedback = document.getElementById("feedback");
+            if (checked === 4) {
+                feedback.textContent = "Excellent! You are ready for Lesson 5!";
+            } else if (checked >= 2) {
+                feedback.textContent = "Good progress! Make sure to complete all items.";
+            } else {
+                feedback.textContent = "";
+            }
+        }
+        
+        function showHint() {
+            document.getElementById("hint").style.display = "block";
+        }
+
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const content = document.getElementById('review-content');
+            
+            html2canvas(content, { scale: 2 }).then(canvas => {
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const ratio = canvas.width / canvas.height;
+                const imgWidth = pdfWidth - 20;
+                const imgHeight = imgWidth / ratio;
+
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10, 10, imgWidth, imgHeight);
+                pdf.save('lesson-4-review.pdf');
+            });
+        }
+    </script>
+</body>
+</html>
