@@ -132,24 +132,38 @@
         const enemy = document.getElementById("enemy1");
         let gameWidth = gameArea.offsetWidth;
 
-        // --- NEW: PLAYER MOUSE CONTROL ---
-        gameArea.addEventListener('mousemove', (e) => {
+        // --- SHARED FUNCTION TO UPDATE PLAYER POSITION ---
+        function updatePlayerPosition(clientX) {
             const rect = gameArea.getBoundingClientRect();
-            // Calculate mouse position relative to the game area
-            let mouseX = e.clientX - rect.left;
+            let relativeX = clientX - rect.left;
             
             // Constrain player within the game area boundaries
             const playerWidth = player.offsetWidth;
-            if (mouseX < playerWidth / 2) {
-                mouseX = playerWidth / 2;
+            if (relativeX < playerWidth / 2) {
+                relativeX = playerWidth / 2;
             }
-            if (mouseX > gameWidth - playerWidth / 2) {
-                mouseX = gameWidth - playerWidth / 2;
+            if (relativeX > gameWidth - playerWidth / 2) {
+                relativeX = gameWidth - playerWidth / 2;
             }
             
-            // Update player position (center on cursor)
-            player.style.left = (mouseX - playerWidth / 2) + "px";
+            // Update player position (center on cursor/finger)
+            player.style.left = (relativeX - playerWidth / 2) + "px";
+        }
+
+        // --- PLAYER MOUSE/TRACKPAD CONTROL ---
+        gameArea.addEventListener('mousemove', (e) => {
+            updatePlayerPosition(e.clientX);
         });
+
+        // --- ADDED: PLAYER TOUCH CONTROL ---
+        gameArea.addEventListener('touchmove', (e) => {
+            // Prevent the page from scrolling on touch devices
+            e.preventDefault();
+            if (e.touches.length > 0) {
+                updatePlayerPosition(e.touches[0].clientX);
+            }
+        }, { passive: false });
+
 
         function runDemo() {
             if (animationId) return; // Prevent multiple loops
