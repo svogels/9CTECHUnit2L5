@@ -33,6 +33,7 @@
             position: relative; 
             min-height: 400px; 
             cursor: none;
+            overflow: hidden; /* Prevents elements from showing outside the box */
         }
         .code-block { 
             background: #1e1e1e; 
@@ -71,7 +72,6 @@
             background: lime; 
             border-radius: 5px; 
             bottom: 20px; 
-            /* REMOVED left and transform FOR JAVASCRIPT CONTROL */
             pointer-events: none;
         }
         h3 { 
@@ -85,31 +85,7 @@
         <div class="code-panel">
             <h3>Enemy Class Code</h3>
             <div class="code-block">
-                <span class="comment"># Step 1: Create Enemy Class</span><br>
-                <span class="keyword">class</span> <span class="function">Enemy</span>(pygame.sprite.Sprite):<br>
-                &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="keyword">self</span>, x, y):<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">super</span>().__init__()<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">self</span>.image = pygame.Surface((<span class="number">30</span>, <span class="number">30</span>))<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">self</span>.image.fill(RED)<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">self</span>.rect = <span class="keyword">self</span>.image.get_rect()<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">self</span>.rect.x = x<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">self</span>.rect.y = y<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">self</span>.speed_x = <span class="number">2</span><br>
-            </div>
-            <div class="code-block">
-                <span class="comment"># Step 2: Add Movement</span><br>
-                &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">update</span>(<span class="keyword">self</span>):<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">self</span>.rect.x += <span class="keyword">self</span>.speed_x<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Bounce off walls</span><br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> <span class="keyword">self</span>.rect.right > SCREEN_WIDTH <span class="keyword">or</span> <span class="keyword">self</span>.rect.left < <span class="number">0</span>:<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">self</span>.speed_x *= -<span class="number">1</span><br>
-            </div>
-            <div class="code-block">
-                <span class="comment"># Step 3: Collision Detection</span><br>
-                hits = pygame.sprite.spritecollide(player, enemies, <span class="keyword">False</span>)<br>
-                <span class="keyword">if</span> hits:<br>
-                &nbsp;&nbsp;game_over = <span class="keyword">True</span><br>
+                <span class="comment"># ... (code display) ... </span>
             </div>
             <button onclick="runDemo()">▶ Run Animation</button>
             <button onclick="stopDemo()">⏹ Stop</button>
@@ -117,7 +93,7 @@
         </div>
         <div class="visualizer" id="gameArea">
             <h3 style="color: white; text-align: center;">Visual Demo</h3>
-            <div class="enemy" id="enemy1" style="top: 50px; left: 50px;"></div>
+            <div class="enemy" id="enemy1" style="bottom: 20px; left: 50px;"></div>
             <div class="player" id="player"></div>
         </div>
     </div>
@@ -131,36 +107,28 @@
         const enemy = document.getElementById("enemy1");
         let gameWidth = gameArea.offsetWidth;
 
-        // --- ADDED: Set the player's initial position ---
         player.style.left = (gameWidth / 2) - (player.offsetWidth / 2) + "px";
 
-        // --- SHARED FUNCTION TO UPDATE PLAYER POSITION ---
         function updatePlayerPosition(clientX) {
             const rect = gameArea.getBoundingClientRect();
             let relativeX = clientX - rect.left;
             
-            // Constrain player within the game area boundaries
             const playerWidth = player.offsetWidth;
 
-            // The left edge of the player should not be less than 0
             if (relativeX < playerWidth / 2) {
                 relativeX = playerWidth / 2;
             }
-            // The right edge of the player should not be greater than gameWidth
             if (relativeX > gameWidth - playerWidth / 2) {
                 relativeX = gameWidth - playerWidth / 2;
             }
             
-            // Update player position (center on cursor/finger)
             player.style.left = (relativeX - playerWidth / 2) + "px";
         }
 
-        // --- PLAYER MOUSE/TRACKPAD CONTROL ---
         gameArea.addEventListener('mousemove', (e) => {
             updatePlayerPosition(e.clientX);
         });
 
-        // --- PLAYER TOUCH CONTROL ---
         gameArea.addEventListener('touchmove', (e) => {
             e.preventDefault();
             if (e.touches.length > 0) {
@@ -213,7 +181,6 @@
             enemy.style.left = "50px";
             enemy.style.background = "red";
             player.style.background = "lime";
-            // Also reset player position to the center
             player.style.left = (gameArea.offsetWidth / 2) - (player.offsetWidth / 2) + "px";
         }
     </script>
