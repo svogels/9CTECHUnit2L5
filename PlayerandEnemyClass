@@ -1,0 +1,25 @@
+# In the "Player and Enemy Classes" section, add a simple Player class
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.Surface((40, 40))
+        self.image.fill(GREEN)
+        self.rect = self.image.get_rect()
+        self.rect.center = (SCREEN_WIDTH / 2, SCREEN_HEIGHT - 50)
+
+    def update(self):
+        # Make the player follow the mouse
+        pos = pygame.mouse.get_pos()
+        self.rect.centerx = pos[0]
+
+# Now, in the "Create Sprites" section, add this:
+all_sprites = pygame.sprite.Group()
+enemies = pygame.sprite.Group()
+
+player = Player()
+all_sprites.add(player)
+
+for i in range(8): # Create 8 enemies
+    enemy = Enemy(random.randrange(SCREEN_WIDTH), random.randrange(-100, 0))
+    all_sprites.add(enemy)
+    enemies.add(enemy)
