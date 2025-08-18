@@ -5,43 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { 
-            font-family: "Courier New", monospace; 
-            margin: 0; 
-            padding: 20px; 
-            background: #1e1e1e; 
-            color: #d4d4d4; 
+            font-family: "Courier New", monospace; margin: 0; padding: 20px; 
+            background: #1e1e1e; color: #d4d4d4; 
         }
         .code-container { 
-            display: flex; 
-            flex-wrap: wrap;
-            gap: 20px; 
-            height: 100%; 
+            display: flex; flex-wrap: wrap; gap: 20px; height: 100%; 
         }
         .code-panel { 
-            flex: 1; 
-            min-width: 350px;
-            background: #2d2d30; 
-            border-radius: 8px; 
-            padding: 20px; 
-            overflow-y: auto; 
+            flex: 1; min-width: 350px; background: #2d2d30; 
+            border-radius: 8px; padding: 20px; overflow-y: auto; 
         }
         .visualizer { 
-            flex: 1; 
-            min-width: 350px;
-            background: #000; 
-            border-radius: 8px; 
-            position: relative; 
-            min-height: 400px; 
-            cursor: none;
-            overflow: hidden; /* Prevents elements from showing outside the box */
+            flex: 1; min-width: 350px; background: #000; 
+            border-radius: 8px; position: relative; min-height: 400px; 
+            cursor: none; overflow: hidden;
         }
         .code-block { 
-            background: #1e1e1e; 
-            padding: 15px; 
-            border-radius: 5px; 
-            margin-bottom: 15px; 
-            border-left: 3px solid #007acc; 
-            white-space: pre-wrap;
+            background: #1e1e1e; padding: 15px; border-radius: 5px; 
+            margin-bottom: 15px; border-left: 3px solid #007acc; white-space: pre-wrap;
         }
         .comment { color: #6a9955; }
         .keyword { color: #569cd6; }
@@ -49,21 +30,20 @@
         .function { color: #dcdcaa; }
         .number { color: #b5cea8; }
         button { 
-            background: #007acc; 
-            color: white; 
-            border: none; 
-            padding: 10px 20px; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            margin: 5px; 
+            background: #007acc; color: white; border: none; 
+            padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px; 
         }
         button:hover { background: #005a9e; }
+        
+        /* --- CSS CHANGE IS HERE --- */
         .enemy { 
             position: absolute; 
             width: 30px; 
             height: 30px; 
             background: red; 
             border-radius: 5px; 
+            bottom: 20px;
+            left: 50px;
         }
         .player { 
             position: absolute; 
@@ -75,30 +55,27 @@
             pointer-events: none;
         }
         h3 { 
-            color: #007acc; 
-            margin-top: 0; 
+            color: #007acc; margin-top: 0; 
         }
     </style>
 </head>
 <body>
     <div class="code-container">
         <div class="code-panel">
-            <h3>Enemy Class Code</h3>
-            <div class="code-block">
-                <span class="comment"># ... (code display) ... </span>
-            </div>
             <button onclick="runDemo()">▶ Run Animation</button>
             <button onclick="stopDemo()">⏹ Stop</button>
             <button onclick="resetDemo()">↺ Reset</button>
         </div>
         <div class="visualizer" id="gameArea">
             <h3 style="color: white; text-align: center;">Visual Demo</h3>
-            <div class="enemy" id="enemy1" style="bottom: 20px; left: 50px;"></div>
+            
+            <div class="enemy" id="enemy1"></div>
             <div class="player" id="player"></div>
         </div>
     </div>
 
     <script>
+        // (JavaScript remains the same as before)
         let animationId;
         let enemyX = 50;
         let enemySpeed = 2;
