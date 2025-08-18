@@ -13,7 +13,7 @@
         }
         .code-container { 
             display: flex; 
-            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            flex-wrap: wrap;
             gap: 20px; 
             height: 100%; 
         }
@@ -32,7 +32,7 @@
             border-radius: 8px; 
             position: relative; 
             min-height: 400px; 
-            cursor: none; /* Hide cursor for better player control feel */
+            cursor: none;
         }
         .code-block { 
             background: #1e1e1e; 
@@ -71,9 +71,8 @@
             background: lime; 
             border-radius: 5px; 
             bottom: 20px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            pointer-events: none; /* Make sure the player doesn't block mouse events */
+            /* REMOVED left and transform FOR JAVASCRIPT CONTROL */
+            pointer-events: none;
         }
         h3 { 
             color: #007acc; 
@@ -132,6 +131,9 @@
         const enemy = document.getElementById("enemy1");
         let gameWidth = gameArea.offsetWidth;
 
+        // --- ADDED: Set the player's initial position ---
+        player.style.left = (gameWidth / 2) - (player.offsetWidth / 2) + "px";
+
         // --- SHARED FUNCTION TO UPDATE PLAYER POSITION ---
         function updatePlayerPosition(clientX) {
             const rect = gameArea.getBoundingClientRect();
@@ -139,9 +141,12 @@
             
             // Constrain player within the game area boundaries
             const playerWidth = player.offsetWidth;
+
+            // The left edge of the player should not be less than 0
             if (relativeX < playerWidth / 2) {
                 relativeX = playerWidth / 2;
             }
+            // The right edge of the player should not be greater than gameWidth
             if (relativeX > gameWidth - playerWidth / 2) {
                 relativeX = gameWidth - playerWidth / 2;
             }
@@ -155,9 +160,8 @@
             updatePlayerPosition(e.clientX);
         });
 
-        // --- ADDED: PLAYER TOUCH CONTROL ---
+        // --- PLAYER TOUCH CONTROL ---
         gameArea.addEventListener('touchmove', (e) => {
-            // Prevent the page from scrolling on touch devices
             e.preventDefault();
             if (e.touches.length > 0) {
                 updatePlayerPosition(e.touches[0].clientX);
@@ -166,20 +170,18 @@
 
 
         function runDemo() {
-            if (animationId) return; // Prevent multiple loops
+            if (animationId) return;
             
             function animate() {
-                gameWidth = gameArea.offsetWidth; // Update width in case of resize
+                gameWidth = gameArea.offsetWidth;
                 enemyX += enemySpeed;
                 
-                // Enemy bounces off walls
                 if (enemyX > gameWidth - enemy.offsetWidth || enemyX < 0) {
                     enemySpeed *= -1;
                 }
                 
                 enemy.style.left = enemyX + "px";
                 
-                // Live collision detection
                 const playerRect = player.getBoundingClientRect();
                 const enemyRect = enemy.getBoundingClientRect();
                 
@@ -211,6 +213,8 @@
             enemy.style.left = "50px";
             enemy.style.background = "red";
             player.style.background = "lime";
+            // Also reset player position to the center
+            player.style.left = (gameArea.offsetWidth / 2) - (player.offsetWidth / 2) + "px";
         }
     </script>
 </body>
