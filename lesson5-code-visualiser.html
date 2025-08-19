@@ -41,8 +41,6 @@
             margin-bottom: 15px; 
             border-left: 3px solid #007acc; 
             white-space: pre-wrap;
-            /* --- FIX --- */
-            /* Explicitly setting the color to ensure visibility against the dark background. */
             color: #d4d4d4;
         }
         .comment { color: #6a9955; }
@@ -66,6 +64,9 @@
             height: 30px; 
             background: red; 
             border-radius: 5px; 
+            /* --- FIX --- */
+            /* Position from the bottom to align with the player */
+            bottom: 20px; 
         }
         .player { 
             position: absolute; 
@@ -121,7 +122,7 @@
         </div>
         <div class="visualizer" id="gameArea">
             <h3 style="color: white; text-align: center;">Visual Demo</h3>
-            <div class="enemy" id="enemy1" style="top: 50px; left: 50px;"></div>
+            <div class="enemy" id="enemy1" style="left: 50px;"></div>
             <div class="player" id="player"></div>
         </div>
     </div>
@@ -140,14 +141,15 @@
             let relativeX = clientX - rect.left;
             
             const playerWidth = player.offsetWidth;
-            if (relativeX < playerWidth / 2) {
-                relativeX = playerWidth / 2;
+            // Clamp the player's position within the game area
+            if (relativeX < 0) {
+                relativeX = 0;
             }
-            if (relativeX > gameWidth - playerWidth / 2) {
-                relativeX = gameWidth - playerWidth / 2;
+            if (relativeX > gameWidth - playerWidth) {
+                relativeX = gameWidth - playerWidth;
             }
             
-            player.style.left = (relativeX - playerWidth / 2) + "px";
+            player.style.left = relativeX + "px";
         }
 
         gameArea.addEventListener('mousemove', (e) => {
@@ -178,13 +180,16 @@
                 const playerRect = player.getBoundingClientRect();
                 const enemyRect = enemy.getBoundingClientRect();
                 
+                // AABB collision detection logic
                 if (playerRect.left < enemyRect.right &&
                     playerRect.right > enemyRect.left &&
                     playerRect.top < enemyRect.bottom &&
                     playerRect.bottom > enemyRect.top) {
+                    // Collision detected!
                     enemy.style.background = "orange";
                     player.style.background = "orange";
                 } else {
+                    // No collision
                     enemy.style.background = "red";
                     player.style.background = "lime";
                 }
@@ -210,4 +215,3 @@
     </script>
 </body>
 </html>
-
