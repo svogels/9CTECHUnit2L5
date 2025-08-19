@@ -5,24 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { 
-            font-family: "Courier New", monospace; margin: 0; padding: 20px; 
-            background: #1e1e1e; color: #d4d4d4; 
+            font-family: "Courier New", monospace; 
+            margin: 0; 
+            padding: 20px; 
+            background: #1e1e1e; 
+            color: #d4d4d4; 
         }
         .code-container { 
-            display: flex; flex-wrap: wrap; gap: 20px; height: 100%; 
+            display: flex; 
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            gap: 20px; 
+            height: 100%; 
         }
         .code-panel { 
-            flex: 1; min-width: 350px; background: #2d2d30; 
-            border-radius: 8px; padding: 20px; overflow-y: auto; 
+            flex: 1; 
+            min-width: 350px;
+            background: #2d2d30; 
+            border-radius: 8px; 
+            padding: 20px; 
+            overflow-y: auto; 
         }
         .visualizer { 
-            flex: 1; min-width: 350px; background: #000; 
-            border-radius: 8px; position: relative; min-height: 400px; 
-            cursor: none; overflow: hidden;
+            flex: 1; 
+            min-width: 350px;
+            background: #000; 
+            border-radius: 8px; 
+            position: relative; 
+            min-height: 400px; 
+            cursor: none; /* Hide cursor for better player control feel */
         }
         .code-block { 
-            background: #1e1e1e; padding: 15px; border-radius: 5px; 
-            margin-bottom: 15px; border-left: 3px solid #007acc; white-space: pre-wrap;
+            background: #1e1e1e; 
+            padding: 15px; 
+            border-radius: 5px; 
+            margin-bottom: 15px; 
+            border-left: 3px solid #007acc; 
+            white-space: pre-wrap;
+            /* --- FIX --- */
+            /* Explicitly setting the color to ensure visibility against the dark background. */
+            color: #d4d4d4;
         }
         .comment { color: #6a9955; }
         .keyword { color: #569cd6; }
@@ -30,20 +51,21 @@
         .function { color: #dcdcaa; }
         .number { color: #b5cea8; }
         button { 
-            background: #007acc; color: white; border: none; 
-            padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px; 
+            background: #007acc; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            margin: 5px; 
         }
         button:hover { background: #005a9e; }
-        
-        /* --- CSS CHANGE IS HERE --- */
         .enemy { 
             position: absolute; 
             width: 30px; 
             height: 30px; 
             background: red; 
             border-radius: 5px; 
-            bottom: 20px;
-            left: 50px;
         }
         .player { 
             position: absolute; 
@@ -52,30 +74,59 @@
             background: lime; 
             border-radius: 5px; 
             bottom: 20px; 
-            pointer-events: none;
+            left: 50%; 
+            transform: translateX(-50%); 
+            pointer-events: none; /* Make sure the player doesn't block mouse events */
         }
         h3 { 
-            color: #007acc; margin-top: 0; 
+            color: #007acc; 
+            margin-top: 0; 
         }
     </style>
 </head>
 <body>
     <div class="code-container">
         <div class="code-panel">
+            <h3>Enemy Class Code</h3>
+            <div class="code-block">
+                <span class="comment"># Step 1: Create Enemy Class</span><br>
+                <span class="keyword">class</span> <span class="function">Enemy</span>(pygame.sprite.Sprite):<br>
+                &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="keyword">self</span>, x, y):<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">super</span>().__init__()<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">self</span>.image = pygame.Surface((<span class="number">30</span>, <span class="number">30</span>))<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">self</span>.image.fill(RED)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">self</span>.rect = <span class="keyword">self</span>.image.get_rect()<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">self</span>.rect.x = x<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">self</span>.rect.y = y<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">self</span>.speed_x = <span class="number">2</span><br>
+            </div>
+            <div class="code-block">
+                <span class="comment"># Step 2: Add Movement</span><br>
+                &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">update</span>(<span class="keyword">self</span>):<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">self</span>.rect.x += <span class="keyword">self</span>.speed_x<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Bounce off walls</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> <span class="keyword">self</span>.rect.right > SCREEN_WIDTH <span class="keyword">or</span> <span class="keyword">self</span>.rect.left < <span class="number">0</span>:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">self</span>.speed_x *= -<span class="number">1</span><br>
+            </div>
+            <div class="code-block">
+                <span class="comment"># Step 3: Collision Detection</span><br>
+                hits = pygame.sprite.spritecollide(player, enemies, <span class="keyword">False</span>)<br>
+                <span class="keyword">if</span> hits:<br>
+                &nbsp;&nbsp;game_over = <span class="keyword">True</span><br>
+            </div>
             <button onclick="runDemo()">▶ Run Animation</button>
             <button onclick="stopDemo()">⏹ Stop</button>
             <button onclick="resetDemo()">↺ Reset</button>
         </div>
         <div class="visualizer" id="gameArea">
             <h3 style="color: white; text-align: center;">Visual Demo</h3>
-            
-            <div class="enemy" id="enemy1"></div>
+            <div class="enemy" id="enemy1" style="top: 50px; left: 50px;"></div>
             <div class="player" id="player"></div>
         </div>
     </div>
 
     <script>
-        // (JavaScript remains the same as before)
         let animationId;
         let enemyX = 50;
         let enemySpeed = 2;
@@ -84,14 +135,11 @@
         const enemy = document.getElementById("enemy1");
         let gameWidth = gameArea.offsetWidth;
 
-        player.style.left = (gameWidth / 2) - (player.offsetWidth / 2) + "px";
-
         function updatePlayerPosition(clientX) {
             const rect = gameArea.getBoundingClientRect();
             let relativeX = clientX - rect.left;
             
             const playerWidth = player.offsetWidth;
-
             if (relativeX < playerWidth / 2) {
                 relativeX = playerWidth / 2;
             }
@@ -158,8 +206,8 @@
             enemy.style.left = "50px";
             enemy.style.background = "red";
             player.style.background = "lime";
-            player.style.left = (gameArea.offsetWidth / 2) - (player.offsetWidth / 2) + "px";
         }
     </script>
 </body>
 </html>
+
