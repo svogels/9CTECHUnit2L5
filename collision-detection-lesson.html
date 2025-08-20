@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collision Detection Lesson</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+        }
+        .slide {
+            display: none;
+            min-height: 500px;
+        }
+        .slide.active {
+            display: block;
+        }
+        .code-snippet {
+            background-color: #2d2d30;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid #007acc;
+            white-space: pre-wrap;
+            font-family: "Courier New", monospace;
+        }
+        .keyword { color: #569cd6; }
+        .function { color: #dcdcaa; }
+        .comment { color: #6a9955; }
+        .string { color: #ce9178; }
+        .number { color: #b5cea8; }
+        .viz-box {
+            border: 2px dashed #666;
+            position: relative;
+            height: 150px;
+            background-color: #2d2d30;
+        }
+        .player-box, .enemy-box {
+            position: absolute;
+            border: 2px solid;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .player-box {
+            background-color: rgba(173, 255, 47, 0.5); /* lime green */
+            border-color: #adff2f;
+            width: 80px;
+            height: 40px;
+        }
+        .enemy-box {
+            background-color: rgba(255, 69, 0, 0.5); /* orangered */
+            border-color: #ff4500;
+            width: 60px;
+            height: 60px;
+        }
+        .highlight {
+            color: #9cdcfe;
+        }
+        /* New styles for demo visualization */
+        .demo-area {
+            background-color: #000;
+            border-radius: 8px;
+            position: relative;
+            height: 120px;
+            border: 1px solid #444;
+        }
+        .demo-player, .demo-enemy {
+            position: absolute;
+            border-radius: 5px;
+        }
+        .demo-player {
+            width: 40px;
+            height: 20px;
+            bottom: 20px;
+        }
+        .demo-enemy {
+            width: 30px;
+            height: 30px;
+            bottom: 20px;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-center mb-2 text-white">Arcade Game Development</h1>
+        <h2 class="text-xl text-center mb-6 text-gray-400">Lesson: Understanding Collision Detection</h2>
+
+        <div id="presentation-container" class="bg-gray-800 p-6 rounded-lg shadow-2xl">
+            <!-- Slide 1: Title -->
+            <div class="slide active">
+                <h3 class="text-2xl font-bold mb-4 text-cyan-400">How Does a Game Know When Objects Touch?</h3>
+                <p class="mb-4">Today, we're exploring one of the most important parts of any game: <strong class="highlight">collision detection</strong>.</p>
+                <p>This is how our game knows when a player has collected a coin, a laser has hit a spaceship, or in our case, when the player runs into an enemy.</p>
+                <div class="mt-8 flex justify-center items-center h-48">
+                    <div class="text-6xl animate-bounce">➡️ 💥 ⬅️</div>
+                </div>
+            </div>
+
+            <!-- Slide 2: The Bounding Box -->
+            <div class="slide">
+                <h3 class="text-2xl font-bold mb-4 text-cyan-400">Part 1: The "Invisible Box"</h3>
+                <p class="mb-4">Computers don't see "players" or "enemies". They see shapes and numbers.</p>
+                <p>To make things simple, programs draw an invisible rectangle around every game object. This is called a <strong class="highlight">Bounding Box</strong>.</p>
+                <p class="mt-4">To detect a collision, we just ask the computer one question:</p>
+                <p class="text-center text-xl italic mt-4 p-4 bg-gray-700 rounded-md">"Are these two invisible boxes overlapping?"</p>
+            </div>
+
+            <!-- Slide 3: Connecting to Coordinates -->
+            <div class="slide">
+                <h3 class="text-2xl font-bold mb-4 text-cyan-400">Connecting to What We Already Know</h3>
+                <p class="mb-4">But how do we know <em class="highlight">where</em> these boxes are? This is where our last lesson comes in!</p>
+                <div class="p-4 bg-gray-700 rounded-md">
+                    <h4 class="font-bold text-lg">Remember our Coordinate System?</h4>
+                    <ul class="list-disc list-inside mt-2">
+                        <li>The screen is a grid.</li>
+                        <li>Everything is placed using (X, Y) coordinates.</li>
+                        <li><strong class="highlight">(0, 0)</strong> is at the <strong class="highlight">TOP-LEFT</strong> corner.</li>
+                    </ul>
+                    <p class="mt-2">This is the key! The bounding box is defined by the X and Y coordinates of its four edges.</p>
+                    <p class="mt-4 text-sm text-gray-400">(This is where you can refer back to your interactive coordinate artifact for a quick refresher.)</p>
+                </div>
+            </div>
+
+            <!-- Slide 4: getBoundingClientRect -->
+            <div class="slide">
+                <h3 class="text-2xl font-bold mb-4 text-cyan-400">Getting the Box Coordinates in Code</h3>
+                <p class="mb-4">In JavaScript, we have a special function to get the exact coordinates of these "invisible boxes" at any moment.</p>
+                <div class="code-snippet">
+                    <span class="comment">// This function gives us the coordinates of the box edges</span><br>
+                    <span class="keyword">const</span> playerRect = player.getBoundingClientRect();<br>
+                    <span class="keyword">const</span> enemyRect = enemy.getBoundingClientRect();
+                </div>
+                <p class="mt-4">This gives us access to four crucial values for each box: <code class="bg-gray-700 p-1 rounded">.left</code>, <code class="bg-gray-700 p-1 rounded">.right</code>, <code class="bg-gray-700 p-1 rounded">.top</code>, and <code class="bg-gray-700 p-1 rounded">.bottom</code>.</p>
+            </div>
+
+            <!-- Slide 5: The Four Checks Intro -->
+            <div class="slide">
+                <h3 class="text-2xl font-bold mb-4 text-cyan-400">Part 2: The Four Checks of a Collision</h3>
+                <p class="mb-4">To see if two boxes are overlapping, we need to run four checks. This method is called <strong class="highlight">AABB (Axis-Aligned Bounding Box)</strong> collision detection.</p>
+                <p class="mt-4 p-4 bg-gray-700 rounded-md text-center text-xl italic">A collision is only happening if <strong class="highlight">ALL FOUR</strong> checks are true at the same time.</p>
+                <p class="mt-4">First, let's look at our goal, taken directly from our interactive demo.</p>
+            </div>
+
+            <!-- NEW Slide 6: Visualizing the Goal -->
+            <div class="slide">
+                <h3 class="text-2xl font-bold mb-4 text-cyan-400">Our Goal: Detecting This!</h3>
+                <p class="mb-4">Our code needs to tell the difference between these two states from our demo:</p>
+                <div class="flex gap-4 mt-4">
+                    <div class="flex-1">
+                        <h4 class="text-center font-bold text-lg mb-2">No Collision</h4>
+                        <div class="demo-area">
+                            <div class="demo-player" style="background: lime; left: 25%;"></div>
+                            <div class="demo-enemy" style="background: red; left: 60%;"></div>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="text-center font-bold text-lg mb-2">Collision!</h4>
+                        <div class="demo-area">
+                            <div class="demo-player" style="background: orange; left: 45%;"></div>
+                            <div class="demo-enemy" style="background: orange; left: 50%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <p class="mt-6">The next four checks are how we teach the computer to see the difference.</p>
+            </div>
+
+            <!-- Slide 7: Check 1 -->
+            <div class="slide">
+                <h3 class="text-2xl font-bold mb-4 text-cyan-400">Check 1: Player's Left vs Enemy's Right</h3>
+                <div class="code-snippet mb-4">playerRect.<span class="highlight">left</span> &lt; enemyRect.<span class="highlight">right</span></div>
+                <p>This asks: "Is the player's left edge to the left of the enemy's right edge?"</p>
+                <div class="viz-box mt-4">
+                    <div class="player-box" style="left: 20%; top: 40px;">Player</div>
+                    <div class="enemy-box" style="left: 50%; top: 30px;">Enemy</div>
+                </div>
+                <p class="mt-4 text-center font-bold text-green-400">TRUE ✅ - The boxes might be colliding.</p>
+            </div>
+            
+            <!-- Slide 8: Check 2 -->
+            <div class="slide">
+                <h3 class="text-2xl font-bold mb-4 text-cyan-400">Check 2: Player's Right vs Enemy's Left</h3>
+                <div class="code-snippet mb-4">playerRect.<span class="highlight">right</span> > enemyRect.<span class="highlight">left</span></div>
+                <p>This asks: "Is the player's right edge to the right of the enemy's left edge?"</p>
+                <div class="viz-box mt-4">
+                     <div class="player-box" style="left: 20%; top: 40px;">Player</div>
+                    <div class="enemy-box" style="left: 50%; top: 30px;">Enemy</div>
+                </div>
+                <p class="mt-4 text-center font-bold text-green-400">TRUE ✅ - The boxes might be colliding.</p>
+            </div>
+
+            <!-- Slide 9: Check 3 -->
+            <div class="slide">
+                <h3 class="text-2xl font-bold mb-4 text-cyan-400">Check 3: Player's Top vs Enemy's Bottom</h3>
+                <div class="code-snippet mb-4">playerRect.<span class="highlight">top</span> &lt; enemyRect.<span class="highlight">bottom</span></div>
+                <p>This asks: "Is the player's top edge above the enemy's bottom edge?"</p>
+                 <div class="viz-box mt-4">
+                     <div class="player-box" style="left: 40%; top: 20px;">Player</div>
+                    <div class="enemy-box" style="left: 45%; top: 50px;">Enemy</div>
+                </div>
+                <p class="mt-4 text-center font-bold text-green-400">TRUE ✅ - The boxes might be colliding.</p>
+            </div>
+
+            <!-- Slide 10: Check 4 -->
+            <div class="slide">
+                <h3 class="text-2xl font-bold mb-4 text-cyan-400">Check 4: Player's Bottom vs Enemy's Top</h3>
+                <div class="code-snippet mb-4">playerRect.<span class="highlight">bottom</span> > enemyRect.<span class="highlight">top</span></div>
+                <p>This asks: "Is the player's bottom edge below the enemy's top edge?"</p>
+                 <div class="viz-box mt-4">
+                    <div class="player-box" style="left: 40%; top: 20px;">Player</div>
+                    <div class="enemy-box" style="left: 45%; top: 50px;">Enemy</div>
+                </div>
+                <p class="mt-4 text-center font-bold text-green-400">TRUE ✅ - The boxes might be colliding.</p>
+            </div>
+
+            <!-- Slide 11: Putting it all together -->
+            <div class="slide">
+                <h3 class="text-2xl font-bold mb-4 text-cyan-400">Putting It All Together</h3>
+                <p class="mb-4">If any one of those checks is false, the objects are separate. But when they are ALL true...</p>
+                <div class="code-snippet">
+                    <span class="keyword">if</span> (playerRect.left &lt; enemyRect.right &amp;&amp; <span class="comment">// Check 1</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;playerRect.right > enemyRect.left &amp;&amp; <span class="comment">// Check 2</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;playerRect.top &lt; enemyRect.bottom &amp;&amp; <span class="comment">// Check 3</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;playerRect.bottom > enemyRect.top) { &nbsp;&nbsp;<span class="comment">// Check 4</span><br>
+                    &nbsp;&nbsp;<span class="comment">// All four are true! COLLISION! 💥</span><br>
+                    }
+                </div>
+                 <div class="mt-4">
+                    <h4 class="text-center font-bold text-lg mb-2">We get the result from our demo!</h4>
+                    <div class="demo-area w-1/2 mx-auto">
+                        <div class="demo-player" style="background: orange; left: 45%;"></div>
+                        <div class="demo-enemy" style="background: orange; left: 50%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 12: Pygame Connection -->
+            <div class="slide">
+                <h3 class="text-2xl font-bold mb-4 text-cyan-400">The Pygame Shortcut</h3>
+                <p class="mb-4">Now you understand the logic! The great news is that game libraries like Pygame do all this hard work for us with a single function.</p>
+                <div class="code-snippet">
+                    <span class="comment"># This one line does all four checks for us!</span><br>
+                    hits = pygame.sprite.spritecollide(player, enemies, <span class="keyword">False</span>)<br>
+                    <span class="keyword">if</span> hits:<br>
+                    &nbsp;&nbsp;<span class="comment"># Collision!</span><br>
+                    &nbsp;&nbsp;game_over = <span class="keyword">True</span>
+                </div>
+                <p class="mt-4">By learning the logic behind it, you're better equipped to understand how games work and how to fix problems when they appear.</p>
+            </div>
+            
+            <!-- Slide 13: Summary -->
+            <div class="slide">
+                <h3 class="text-2xl font-bold mb-4 text-cyan-400">Lesson Summary</h3>
+                <ul class="list-disc list-inside space-y-3 text-lg">
+                    <li>We use invisible <strong class="highlight">Bounding Boxes</strong> to represent our game objects.</li>
+                    <li>We check if these boxes are <strong class="highlight">overlapping</strong> in every frame of the game.</li>
+                    <li>A collision happens only if <strong class="highlight">four specific conditions</strong> (the AABB checks) are all met.</li>
+                    <li>Game libraries like Pygame provide helpful <strong class="highlight">shortcuts</strong> to do this for us, but now you know how it really works!</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Navigation -->
+        <div class="flex justify-between mt-6">
+            <button id="prevBtn" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg transition-colors">Previous</button>
+            <div class="text-white" id="slide-counter">Slide 1 / 13</div>
+            <button id="nextBtn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg transition-colors">Next</button>
+        </div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const nextBtn = document.getElementById('nextBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const slideCounter = document.getElementById('slide-counter');
+        let currentSlide = 0;
+
+        function showSlide(n) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[n].classList.add('active');
+            currentSlide = n;
+            updateCounter();
+            updateButtons();
+        }
+
+        function updateCounter() {
+            slideCounter.textContent = `Slide ${currentSlide + 1} / ${slides.length}`;
+        }
+        
+        function updateButtons() {
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === slides.length - 1;
+            prevBtn.classList.toggle('opacity-50', prevBtn.disabled);
+            nextBtn.classList.toggle('opacity-50', nextBtn.disabled);
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentSlide < slides.length - 1) {
+                showSlide(currentSlide + 1);
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+
+</body>
+</html>
